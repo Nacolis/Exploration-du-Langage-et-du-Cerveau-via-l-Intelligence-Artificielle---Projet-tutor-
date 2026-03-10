@@ -1,0 +1,13 @@
+commencer par un dataset corpus (corpus) ex un simple un complex
+
+description du corpus ex quel pourcentage de verbes
+
+commencer avec notre modle GPT2
+
+
+
+
+faire diapo sur code
+
+
+$lien vers code db  pr le rendu makefile git 
