@@ -1,6 +1,11 @@
 import spacy
 from datasets import load_dataset
 import json
+from transformers import GPT2Tokenizer, GPT2Model
+import torch
+
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+model = GPT2Model.from_pretrained("gpt2", output_hidden_states=True)
 
 def preprocess_corpus(limit_chars=50000):
     print("Loading WikiText-103...")
