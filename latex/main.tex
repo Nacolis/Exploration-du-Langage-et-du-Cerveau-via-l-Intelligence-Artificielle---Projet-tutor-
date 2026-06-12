@@ -5,63 +5,63 @@
 \usepackage{graphicx} 
 \usepackage{hyperref} 
 \hypersetup{
-    colorlinks=true,    % Active la coloration du texte au lieu des cadres
-    linkcolor=black,    % Couleur des liens internes (sections, sommaire)
-    citecolor=black,    % Couleur des citations bibliographiques
+    colorlinks=true,    
+    linkcolor=black,    
+    citecolor=black,    
     filecolor=black,    
-    urlcolor=blue       % Couleur des liens vers le web (souvent gardée en bleu)
+    urlcolor=blue       
 }
 \usepackage{amsmath, amssymb} 
 \usepackage{geometry}
 \usepackage{float}
 \usepackage{lmodern}
-% Configuration des marges (un peu plus larges pour la reliure si impression)
+
 \geometry{hmargin=2.5cm,vmargin=2.5cm}
 
 \begin{document}
 
-% --- DÉBUT DE LA PAGE DE GARDE PERSONNALISÉE ---
-\begin{titlepage}
-    % On passe en police Sans-Serif pour la couverture (plus moderne)
-    \sffamily 
-    \centering % Tout centrer par défaut
 
-    % --- En-tête avec les logos ---
-    % Utilisation de minipages pour aligner les logos gauche/droite
+\begin{titlepage}
+    
+    \sffamily 
+    \centering 
+
+    
+    
     \begin{minipage}{0.45\textwidth}
         \begin{flushleft}
-            % Remplace par le nom exact de ton fichier image du badge "Licence IV"
+            
             \includegraphics[height=2cm]{Université_Paris_8_Logo_2024.svg.png} 
         \end{flushleft}
     \end{minipage}
     \hfill
     \begin{minipage}{0.45\textwidth}
         \begin{flushright}
-            % Remplace par le nom exact de ton fichier image "Paris 8"
+            
             \includegraphics[height=2cm]{logo.png} 
         \end{flushright}
     \end{minipage}
 
     \vspace{1.5cm}
 
-    % --- Infos Université ---
+    
     {\Large Université Paris 8}\\[0.2cm]
     {\large Licence Informatique \& Vidéoludisme}
 
     \vspace{2.5cm}
 
-    % --- Titre du projet (Design moderne avec lignes horizontales) ---
-    \rule{\linewidth}{0.5mm} \\[0.4cm] % Trait horizontal
+    
+    \rule{\linewidth}{0.5mm} \\[0.4cm] 
     { \huge \bfseries Exploration du Langage et du Cerveau via l'Intelligence Artificielle \\[0.4cm] }
     \rule{\linewidth}{0.5mm} \\[1cm]
 
-    % --- Type de document ---
+    
     {\LARGE \textbf{Rapport de Projet Tutoré}}
 
     \vspace{3cm}
 
-    % --- Étudiants et Tuteur ---
-    % On sépare en deux colonnes
+    
+    
     \begin{minipage}{0.4\textwidth}
         \begin{flushleft} \large
             \emph{Réalisé par :}\\
@@ -77,37 +77,38 @@
         \end{flushright}
     \end{minipage}
 
-    \vfill % Pousse la date tout en bas de la page
+    \vfill 
 
-    % --- Bas de page ---
+    
     {\large Année universitaire 2025-2026}
 
 \end{titlepage}
-% --- FIN DE LA PAGE DE GARDE ---
 
-% Remise de la police normale pour le reste du rapport
+
+
 \normalfont 
 
-% Table des matières
+
 \tableofcontents
 
-% --- AJOUT DE LA LISTE DES FIGURES ---
-% C'est cette commande qui génère la liste automatiquement
+
+
 \listoffigures 
-% Ajoute la liste des figures à la table des matières (optionnel mais propre)
+
 \addcontentsline{toc}{chapter}{Liste des figures} 
 
 \newpage
 
-% Inclusion des chapitres
+
 \input{resume}
 \input{intro}
 \input{chapitre1}
 \input{chapitre2}
 \input{chapitre3}
+\input{chapitre4}
 \input{conclusion}
 
-% Bibliographie
+
 \bibliographystyle{alpha}
 \bibliography{references}
 

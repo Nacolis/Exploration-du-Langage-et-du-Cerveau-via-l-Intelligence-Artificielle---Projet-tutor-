@@ -10,7 +10,7 @@ Dans ce chapitre, nous justifions nos choix d'implémentation afin de vérifier 
 Afin de mesurer l'évolution de la dimensionnalité intrinsèque (ID) au sein d'une architecture neuronale, nous avons sélectionné un ensemble d'outils spécifiques.
 
 \subsection{Modèle de Langage : GPT-2 Small}
-Nous avons choisi GPT-2 (via la librairie \textit{HuggingFace}) en raison de son architecture \textit{Decoder-only} qui traite l'information de manière unidirectionnelle (de gauche à droite, avec un masque causal). Ce choix est crucial pour tester l'activité de \textit{ramping} (Hypothèse 1), car il simule la progression temporelle de la lecture humaine, contrairement aux modèles bidirectionnels comme BERT qui "voient" toute la phrase d'un coup.
+Nous avons choisi GPT-2 Small (via la librairie \textit{HuggingFace Transformers}) en raison de son architecture \textit{Decoder-only} causal qui traite l'information de manière unidirectionnelle (de gauche à droite, avec un masque causal). Ce choix est crucial pour étudier l'activité de \textit{ramping} (Hypothèse 1), car il simule la progression temporelle de la lecture humaine, contrairement aux modèles bidirectionnels comme BERT qui "voient" toute la phrase d'un coup. 
 
 \subsection{Algorithme d'Estimation de l'ID : TwoNN}
 Conformément à l'état de l'art établi par Facco et al. (2017) \cite{facco2017estimating}, nous utiliserons l'algorithme \textit{Two-Nearest Neighbors} (TwoNN). 
@@ -26,38 +26,39 @@ L’implémentation est réalisée en \textbf{Python}. Nous utilisons :
     \item \textbf{scikit-dimension} qui fournit une implémentation optimisée de l'algorithme TwoNN.
 \end{itemize}
 
-\subsection{Extension vers Llama 3.1 (8B)}
-Nous intégrons également un modèle récent, Llama 3.1 (8 milliards de paramètres), pour généraliser nos observations. Cela nous permettra de prouver que les mécanismes de compression sémantique sont fondamentaux aux architectures Transformers modernes, et d'observer si la "vitesse" de compression diffère selon la profondeur du modèle.
-
-\subsection{Limites de la modélisation du MUC}
-Il est important de noter une limite théorique : l’architecture Transformer ne modélise pas la composante \og Contrôle \fg{} du modèle MUC. Dans le cerveau humain, le contrôle intervient pour résoudre les conflits sémantiques (comme face au Jabberwocky). Ici, GPT-2 et Llama 3 n’ont pas de supervision ; ils traiteront le Jabberwocky comme une séquence statistique improbable. Nous nous attendons donc à voir l’échec de l’Unification (un profil \textit{Hunchback} déformé) sans pouvoir observer l’activité compensatoire du Contrôle.
+\subsection{Limite du modèle : absence de mécanisme de contrôle}
+Contrairement au modèle MUC (voir Section~\ref{sec:muc}, page~\pageref{sec:muc}), l'architecture Transformer ne dispose pas de mécanisme de \og Contrôle \fg. Ce dernier, dans le cerveau humain, gère l'attention et oriente dynamiquement la sélection des informations pertinentes. GPT-2, en tant que modèle purement statistique, n'a pas cette capacité : face à du jabberwocky, il traite simplement une séquence improbable sans pouvoir adapter son attention en fonction du contexte sémantique. Les différences de dimensionnalité observées entre semantic et jabberwocky refléteront donc l'absence de sens, non une mobilisation active de ressources attentionnelles pour gérer le conflit.
 
 % --- SECTION 2.2 ---
 \section{Protocole de Génération des Stimuli}
 
 La validation de nos hypothèses repose sur la comparaison de deux types de signaux. L’objectif est d’isoler l’impact du sens (la sémantique) en maintenant la structure grammaticale constante.
 
-\subsection{Le groupe "Sémantique"}
-Nous avons constitué un corpus de \textbf{500 phrases} extraites du dataset \textit{Wikitext} (Wikipedia). Ce volume a été choisi pour deux raisons :
+\subsection{Source des phrases}
+Les phrases proviennent du corpus \textbf{WikiText-2} (Wikipedia, split train), en \textbf{anglais uniquement}. Ce choix est imposé par le fait que GPT-2 Small est entraîné exclusivement sur WebText (corpus anglophone). Toute phrase en français serait traitée comme une séquence incompréhensible, rendant la comparaison sémantique vs jabberwocky invalide.
+
+Après normalisation (longueur 8--20 mots, ponctuation finale, pas de chiffres, URLs, ou parenthèses), un corpus de \textbf{$N = 500$ phrases} a été sélectionné pour le groupe sémantique. Ce nombre a été choisi pour deux raisons :
 \begin{itemize}
-    \item \textbf{Stabilité statistique :} L'estimateur TwoNN nécessite une densité de points suffisante pour éviter les biais. 500 phrases permettent d'obtenir une courbe d'évolution de l'ID représentative.
-    \item \textbf{Diversité linguistique :} Ce nombre couvre une variété de structures syntaxiques (phrases simples, complexes, énumérations), évitant le biais d'un style d'écriture spécifique.
+    \item \textbf{Densité statistique pour TwoNN :} L'estimateur requiert suffisamment de points pour éviter les biais d'estimation. 500 phrases offrent une couverture appropriée.
+    \item \textbf{Coût computationnel :} Extraction des hidden states et calcul de l'ID restent abordables sur CPU.
 \end{itemize}
 
-\subsection{Le groupe "Jabberwocky"}
-Pour tester l'Hypothèse 3, nous avons généré une version "vide de sens" de chaque phrase du premier groupe. Ce procédé s'inspire des neurosciences cognitives pour tromper le modèle sans briser la structure de la langue.
+\subsection{Génération automatique du groupe "Jabberwocky"}
+Pour tester l'Hypothèse 3, nous avons généré automatiquement une version "vide de sens" de chaque phrase sémantique. Ce procédé s'inspire des neurosciences cognitives pour présenter au modèle une séquence syntaxiquement structurée mais sémantiquement vide.
 
-Le processus de transformation suit trois règles strictes :
+Le processus de transformation suit trois règles strictes (implémentées via spaCy) :
 \begin{enumerate}
-    \item \textbf{Préservation des mots-outils :} Nous conservons les déterminants, prépositions et conjonctions (ex: le, la, dans, mais) qui servent de squelette syntaxique.
-    \item \textbf{Substitution lexicale :} Seuls les mots porteurs de sens (noms, verbes, adjectifs) sont remplacés.
-    \item \textbf{Respect de la phonotactique :} Les pseudo-mots (ex: \textit{vlipure, carlouée}) sont créés pour respecter les règles de sonorité du français. Ils sont "lisibles" mais n'existent pas dans le dictionnaire du modèle.
+    \item \textbf{Préservation des mots-outils :} Tous les déterminants (DET), prépositions (ADP), conjonctions (CONJ), pronoms (PRON), auxiliaires (AUX) et particules (PART) sont conservés intacts.
+    \item \textbf{Préservation des noms propres :} Pour réduire la dispersion BPE, les noms propres ne sont pas remplacés.
+    \item \textbf{Substitution des mots porteurs :} Seuls les noms (NOUN), verbes (VERB), adjectifs (ADJ) et adverbes (ADV) sont remplacés par des pseudo-mots générés aléatoirement.
 \end{enumerate}
 
-\textit{Exemple :} "La musique d'Elsa Barraine est rarement jouée" devient "La vlipure d'Elsa Barraine est jitrement carlouée".
+Les pseudo-mots sont générés pour respecter les contraintes phonotactiques de l'anglais et sont globalement uniques (chaque pseudo-mot n'apparaît qu'une seule fois dans le corpus).
 
-\subsection{Synthèse des données}
-Chaque phrase "Jabberwocky" possède exactement le même nombre de mots et la même structure grammaticale que sa phrase "Sémantique" correspondante. Cette approche par paires garantit que toute différence de dimensionnalité observée est uniquement due à l'absence de cohérence sémantique.
+\textit{Exemple :} "The evolution of language is rarely taught" devient "The zumplation of language is zikly carting".
+
+\subsection{Appariement et garanties}
+Chaque phrase "Jabberwocky" possède exactement le même nombre de tokens et la même structure grammaticale que sa phrase "Sémantique" correspondante. Cette approche par paires garantit que toute différence de dimensionnalité observée reflète l'impact de l'absence de cohérence sémantique, dissociée de la longueur ou de la structure de surface.
 
 \subsection{Enjeux de la Tokenisation (BPE)}
 Avant d'être traitées, les phrases sont converties en unités numériques par l'algorithme \textit{Byte Pair Encoding} (BPE). Ce processus est crucial et induit un biais technique pour le Jabberwocky :
@@ -69,17 +70,32 @@ Avant d'être traitées, les phrases sont converties en unités numériques par 
 % --- SECTION 2.3 ---
 \section{Étapes de l'analyse}
 
-Pour chaque phrase testée, nous suivons un parcours précis d'observation :
+L'analyse suit une séquence reproductible de scripts :
 
+\subsection{Étape 0 : Validation de TwoNN (script \texttt{00\_validate\_twonn.py})}
+Avant toute application au modèle, l'estimateur TwoNN est calibré et validé sur des jeux synthétiques de dimension intrinsèque connue. Cela permet de vérifier que l'implémentation produit des estimations robustes.
+
+\subsection{Étape 1 : Génération des stimuli (script \texttt{01\_generate\_stimuli.py})}
+Ce script extrait des phrases sémantiques du corpus WikiText-2, applique les filtres de nettoyage et génère les phrases Jabberwocky correspondantes en remplaçant les mots porteurs par des pseudo-mots respectant la phonotactique anglaise. Les paires de phrases sont sauvegardées au format JSON.
+
+\subsection{Étape 2 : Extraction des représentations (script \texttt{02\_extract\_hidden\_states.py})}
+Pour chaque phrase (sémantique + jabberwocky) :
 \begin{itemize}
-    \item \textbf{Récupération de l'activité interne :} Nous n'observons pas seulement la sortie, mais nous enregistrons l'activité des \textit{hidden states} à chaque couche intermédiaire. Cela nous donne une image précise de l'état du modèle, mot après mot.
-    
-    \item \textbf{Mesure de l'ID mot après mot :} Pour tester l'effet de \textit{ramping}, nous calculons la dimensionnalité au fur et à mesure que le modèle lit la phrase (1er mot, puis 1er+2ème, etc.). Cela permet de voir si l'information s'accumule ou stagne.
-    
-    \item \textbf{Comparaison des profils de couches :} Nous comparons l'évolution de la complexité entre l'entrée et la sortie. L'objectif est de vérifier si le modèle parvient à compresser les phrases sémantiques (profil d'expansion-compression).
+    \item Le modèle GPT-2 encode la phrase et produit des \textit{hidden states} à chaque couche (0--12) et position (token par token).
+    \item Ces states sont alignés avec les mots de la phrase originale en gérant la fragmentation BPE (un jeton représentatif est sélectionné par décile).
+    \item Les représentations vectorielles correspondantes sont sauvegardées au format NumPy compressé.
 \end{itemize}
 
-À l'inverse, avec le Jabberwocky, nous nous attendons à ce que cette simplification échoue. Comme le mot "vlipure" ne correspond à rien de connu, le modèle ne peut pas le compresser vers un concept simple. Il reste "perdu" dans la complexité, ce qui devrait empêcher la chute de l'ID dans les dernières couches.
+\subsection{Étape 3 : Calcul de l'ID (script \texttt{03\_compute\_id.py})}
+Pour chaque condition (semantic, jabberwocky), couche, et décile de position :
+\begin{itemize}
+    \item On construit une matrice $\mathbf{X} \in \mathbb{R}^{N \times D}$ où chaque ligne est la représentation vectorielle d'une phrase à la position donnée.
+    \item TwoNN estime l'ID de cette matrice locale, avec intervalles de confiance calculés par bootstrap sans remise.
+    \item Les résultats sont testés statistiquement (Mann-Whitney avec correction Bonferroni, $\alpha = 0.05$ et régressions linéaires de ramping).
+\end{itemize}
+
+\subsection{Étape 4 : Visualisation (script \texttt{04\_visualize.py})}
+Les profils d'ID par couche (Hunchback) et par décile (Ramping) sont tracés, ainsi que la distribution de la fragmentation BPE et la différence d'ID.
 
 % --- CONCLUSION DU CHAPITRE (OBLIGATOIRE) ---
 Dans ce chapitre, nous avons détaillé notre approche méthodologique, justifiant le choix des modèles (GPT-2, Llama) et de la métrique (TwoNN). Nous avons également défini un protocole strict de génération de stimuli (Sémantique vs Jabberwocky) pour isoler l'impact du sens sur la dimensionnalité. Ces outils et ces données sont maintenant prêts à être utilisés pour générer les résultats que nous analyserons dans le chapitre suivant.

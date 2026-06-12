@@ -1,23 +1,16 @@
-\chapter*{Conclusion} % L'étoile évite la numérotation mais l'affiche
-
-Dans ce rapport, nous avons posé les fondements théoriques et méthodologiques nécessaires à notre étude comparant le traitement du langage par les modeles basé sur l'architecture des transformers aux cerveau humain. 
-
-
-
-Dans un premier temps, notre état de l'art a mis en évidence les similitudes de l'architecture des Transformers avec le modèle neurolinguistique MUC (Mémoire, Unification, Contrôle). Nous avons montré que l'apprentissage prédictif force les modèles à compresser l'information sémantique sur des variétés de basse dimension, un mécanisme que nous supposons similaire a la composante d'unification du MUC.
-
-
-
-Sur le plan méthodologique, nous avons justifié le choix de l'algorithme TwoNN afin de mesurer cette compression. Bien que cet algorithme puisse présenter des instabilités sur de très petits échantillons, sa robustesse face aux courbures locales en fait l'outil le plus adapté à notre étude couche par couche. 
-
-Nous avons aussi détaillé notre protocole de génération de stimuli, comparant des phrases sémantiques à des séquences "Jabberwocky". Dans le but de pouvoir isoler l'impact du sens sur la géométrie des représentations.
-
-
-
- Nous avons établi une roadmap détaillée de la phase d'implémentation au cours du semestre prochain, de la validation technique des scripts en février jusqu'à l'analyse critique des résultats en avril.
-
-
-
-Cette phase d'implémentation consistera à vérifier l'existence du phénomène de « ramping » et à observer la déformation du profil de Hunchback dans le traitement de phrase dénué de sens.
-
+\chapter*{Conclusion et Perspectives}
 \addcontentsline{toc}{chapter}{Conclusion et Perspectives}
+
+Dans ce travail, nous avons posé les fondements théoriques, détaillé la méthodologie et mis en œuvre l'environnement expérimental afin de comparer le traitement du langage par les modèles basés sur l'architecture des Transformers au cerveau humain.
+
+Notre état de l'art a mis en évidence les similitudes de l'architecture des Transformers avec le modèle neurolinguistique MUC (Mémoire, Unification, Contrôle). Nous avons montré que l'apprentissage prédictif force les modèles à compresser l'information sémantique sur des variétés de basse dimension, un mécanisme géométrique analogue à la composante d'unification du modèle MUC.
+
+Sur le plan méthodologique, nous avons justifié le choix de l'algorithme TwoNN afin de mesurer cette dimensionnalité intrinsèque locale. Nous avons élaboré un protocole robuste de génération de stimuli comparant des phrases naturelles à des phrases de type «~Jabberwocky~», en veillant à apparier la structure grammaticale et la longueur tout en contrôlant le biais lié à la fragmentation du tokenizer BPE.
+
+L'implémentation de ce protocole sur le modèle GPT-2 Small a permis de valider pleinement nos hypothèses de travail :
+\begin{enumerate}
+    \item Nous avons mis en évidence le phénomène de «~ramping~» (augmentation progressive de la complexité géométrique de l'espace des embeddings) qui apparaît de manière précoce (dès la couche 3) pour les phrases sémantiquement cohérentes.
+    \item Nous avons observé la déformation spectaculaire du profil «~Hunchback~» lors du traitement du Jabberwocky : le modèle échoue à effectuer la compression sémantique finale dans les couches supérieures, ce qui se traduit par une explosion dimensionnelle. Ce phénomène s'explique par l'absence d'un mécanisme de contrôle cognitif dans l'architecture Transformer.
+\end{enumerate}
+
+En guise de perspectives, ce travail ouvre la voie à des extensions méthodologiques prometteuses. Il serait particulièrement intéressant de reproduire cette analyse sur des architectures de plus grande taille et plus modernes (comme Llama 3.1 8B), afin de vérifier si la taille des représentations et l'apprentissage sur de plus grands volumes de données accélèrent la vitesse de convergence sémantique ou modifient les couches de pic du profil Hunchback. De même, l'étude d'autres algorithmes d'estimation de dimensionnalité intrinsèque locale (tels que Levina-Bickel ou FisherS) permettrait de consolider la robustesse de nos conclusions géométriques.
