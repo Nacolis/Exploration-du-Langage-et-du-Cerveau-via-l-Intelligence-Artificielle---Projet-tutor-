@@ -1,0 +1,225 @@
+%Copyright (c) <2015> <John T. Foster>
+
+%Permission is hereby granted, free of charge, to any person obtaining a copy
+%of this software and associated documentation files (the "Software"), to deal
+%in the Software without restriction, including without limitation the rights
+%to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%copies of the Software, and to permit persons to whom the Software is
+%furnished to do so, subject to the following conditions:
+
+%The above copyright notice and this permission notice shall be included in
+%all copies or substantial portions of the Software.
+
+%THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%THE SOFTWARE.
+
+%Modified by <Farès Belhadj> <2018>
+
+\usepackage[utf8]{inputenc}
+\DeclareOptionBeamer{auteur}{\def\beamer@auteur{#1}}    
+\ExecuteOptionsBeamer{auteur=F. Belhadj}
+\DeclareOptionBeamer{auteurbis}{\def\beamer@auteurbis{#1}}    
+\ExecuteOptionsBeamer{auteurbis=R. Kyriakoglou}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+%Requirements
+\RequirePackage{tikz}
+\graphicspath{{./images/}}
+
+%The base themes we inherit from
+\usetheme[headheight=1.0cm]{boxes}                 
+\usecolortheme{default}                 
+
+\definecolor{utred}{RGB}{116, 0, 0}
+\definecolor{utblack}{RGB}{51, 63, 72}
+\definecolor{cffffff}{RGB}{255,255,255}
+\definecolor{amsired}{RGB}{208, 37, 41}
+\pgfdeclareimage[width=0.100\textwidth]{liv}{./images/liv_logo.png}
+
+%The titlebar showing the logo and University name
+\addheadbox{section in head/foot}{
+  \raisebox{0.55em}{
+      ~~\pgfuseimage{liv}
+  }
+  \raisebox{1.70em}{
+    ~~\symbol{64}~Univ. Paris \textcolor{amsired}{8}
+  }
+  %% \if\insertframenumber1
+  %% ~
+  %% \else
+  %% \if\insertframenumber2
+  %% ~
+  %% \else
+  %% \raisebox{1.25em}{\scriptsize
+  %%   \begin{minipage}[l]{0.73\textwidth}
+  %%     \hspace*{\fill} \thesection~-~\secname~~~ \hspace*{\fill} {\beamer@auteur}~---~\insertframenumber/\inserttotalframenumber
+  %%   \end{minipage}
+  %% }
+  %% \fi
+  %% \fi
+  %%FN\insertframenumber{}FN\_v\value{\insertframenumber{}}
+  \ifthenelse{\insertframenumber>2}
+             {
+               \ifthenelse{\insertframenumber>52\and\insertframenumber<62}
+                          {
+                            \raisebox{1.25em}{\scriptsize
+                              \begin{minipage}[l]{0.73\textwidth}
+                                \hspace*{\fill} \thesection~-~\secname~~~
+                                \hspace*{\fill} {\beamer@auteurbis}~---~\insertframenumber/\inserttotalframenumber
+                              \end{minipage}
+                            }
+                          }{
+                            \raisebox{1.25em}{\scriptsize
+                              \begin{minipage}[l]{0.73\textwidth}
+                                \hspace*{\fill} \thesection~-~\secname~~~
+                                \hspace*{\fill} {\beamer@auteur}~---~\insertframenumber/\inserttotalframenumber
+                              \end{minipage}
+                            }
+                          }
+             }{~}
+}
+%\addheadbox{section in head/foot}{\raisebox{0.0em}{\includegraphics[width=1.0\textwidth]{\beamer@auteur}}}
+
+%Theme settings
+%Title page
+\setbeamerfont{title page}{series=\mdseries}
+\setbeamercolor{title page}{fg=utblack}
+\setbeamerfont{title}{series=\bfseries}
+\setbeamercolor{title}{fg=utred}
+\setbeamerfont{subtitle}{series=\bfseries}
+\setbeamercolor{subtitle}{fg=utblack}
+\setbeamerfont{author}{series=\mdseries}
+\setbeamercolor{author}{fg=utblack}
+%Color palette
+\setbeamercolor{structure}{fg=utred}
+\setbeamercolor{section in head/foot}{bg=utred, fg=white}
+\setbeamercolor*{palette primary}{use=structure,bg=white, fg=utred}
+\setbeamercolor*{palette secondary}{use=structure,bg=white, fg=utred}
+\setbeamercolor*{palette tertiary}{bg=utred, fg=utred}
+\setbeamercolor*{palette quaternary}{bg=white, fg=utred}
+%Frames
+\setbeamercolor*{frametitle}{use=structure,fg=utred, bg=white}
+\setbeamercolor*{framesubtitle}{fg=utblack}
+%Blocks
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor*{block title}{fg=white, bg=utred}
+%Text
+\setbeamercolor{normal text}{bg=white,fg=utblack}
+\setbeamercolor{alerted text}{fg=utblack}
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!35}
+\setbeamertemplate{itemize subitem}{{\textendash}}
+\setbeamercolor{subitem}{fg=utblack}
+%Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+%Note page settings
+\setbeamerfont{note page}{size=\scriptsize}
+\setbeamertemplate{note page}{\insertnote\par}
+
+%Setup title page
+\defbeamertemplate*{title page}{customized}[1][]{%
+  \vspace{1cm}
+  \usebeamerfont{title page}\usebeamercolor[fg]{title page}
+  Licence Informatique et Vidéoludisme\par
+  \vspace{-0.2cm}
+  \rule{11cm}{0.4pt}\par
+  \bigskip
+  \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par
+  \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par
+  \bigskip
+  \usebeamerfont{title page}\usebeamercolor[fg]{title page}
+  \rule{11cm}{0.4pt}\par
+  {\flushright
+  \usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par
+  \usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\par
+  \usebeamerfont{date}\usebeamercolor[fg]{institute}\insertdate\par
+  }
+}
+
+
+%Use correct fonts
+%%\usepackage[default,osfigures,scale=0.95]{opensans}
+\usepackage[default,scale=0.95]{opensans}
+\usepackage[T1]{fontenc}
+
+
+%Use biber for special bibliogrphay.  The next few lines are all custom hacks to
+%make nice footnote citation in beamer.
+\usepackage[hyperref=true,style=verbose,labeldate=true,minnames=2,maxnames=10,maxbibnames=99,backend=bibtex]{biblatex}
+%Use utred for hyperlinks
+\hypersetup{colorlinks=true, allcolors=utblack, linkcolor=utblack, urlcolor=utred}
+
+%\renewcommand*{\labelnamepunct}{\addcolon\addspace}
+\DeclareFieldFormat[article,inbook,incollection,inproceedings,patent,thesis,unpublished]
+{title}{#1\isdot}
+\renewbibmacro*{cite:short}{%
+  \printnames{labelname}%
+  \setunit*{\addspace}%
+  \printtext[bibhyperlink]{%
+    \printfield{labelyear}\printfield{extrayear}}}
+
+%Remove footnote marks
+\newcommand\footnotenonum[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+\makeatletter
+\renewrobustcmd{\blx@mkbibfootnote}[2]{%
+  \iftoggle{blx@footnote}
+    {\blx@warning{Nested notes}%
+     \addspace\mkbibparens{#2}}
+    {\unspace
+     \ifnum\blx@notetype=\tw@
+       \expandafter\@firstoftwo
+     \else
+       \expandafter\@secondoftwo
+     \fi
+       {\csuse{blx@theendnote#1}{\protecting{\blxmkbibnote{end}{#2}}}}
+       {\csuse{footnotenonum#1}{\protecting{\blxmkbibnote{foot}{#2}}}}}}
+\makeatother
+
+%For footnote citing
+\setbeamertemplate{footnote}{% 
+  \parbox[b]{1.0\textwidth}{%
+  \tiny
+  \parindent 1em 
+  \noindent
+  \hbox to 1.8 em{\hfil\insertfootnotemark}
+  \insertfootnotetext
+  }
+} 
+
+\renewcommand\cite{\footcite}
+
+%Create lastpage macro
+\newcommand{\lastframe}{%
+  \setbeamercolor{background canvas}{bg=utred}
+  \setbeamertemplate{headline}{
+    \leavevmode%
+    \hbox{%
+      \begin{beamercolorbox}[wd=\paperwidth,ht=8.25ex,dp=3.5ex]{utred}%
+      \end{beamercolorbox}%
+    }%
+  }
+  \begin{frame}
+    \vspace{1.5cm}
+    \begin{center}
+      \includegraphics[width=0.2\textwidth]{./images/liv_logo.png}\\
+      \textcolor{white}{\textbf{L}icence \textbf{I}nformatique et \textbf{V}idéoludisme}\\
+      \textcolor{white}{Université Paris}~\textcolor{amsired}{8}
+    \end{center}
+  \end{frame}
+}
+
+\newcommand{\titleframe}{\frame{\maketitle}}
+
+\mode<all>

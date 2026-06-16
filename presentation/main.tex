@@ -1,0 +1,512 @@
+%% Template et conseils pour préparer des slides de présentation, pour
+%% les étudiant·es de Licence Informatique et vidéoludisme de
+%% l'université Paris 8.
+%%
+%% Par Farès Belhadj, amsi@up8.edu
+%% Le 26 mai 2025
+%% Personnalisé pour le projet tutoré "Exploration du Langage et du Cerveau"
+
+\documentclass[t, aspectratio=169]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+
+%% Configuration de l'auteur pour le pied de page
+\usetheme[auteur={N.~Roy \& T.~Massenya}, auteurbis={Nicolas Roy \& Théo Massenya}]{m2ise}
+
+% Enable cancelto in math
+\usepackage{cancel}
+\renewcommand{\CancelColor}{\color{utred}}
+
+% Funny icons et autres
+% \usepackage[tikz]{bclogo}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{url}
+\usepackage{datetime}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{keystroke}
+\usepackage{xcolor}
+\usepackage{fancyvrb}
+\usepackage{relsize}
+\usepackage{ragged2e}
+\usepackage{inconsolata}
+\usepackage{amsmath, amssymb}
+
+\lstset{
+  language=Python,
+  keywordstyle=\color{teal}\textbf,
+  stringstyle=\color{blue},
+  identifierstyle=\itshape,
+  commentstyle=\itshape\color{gray},
+  basicstyle=\ttfamily\tiny,
+  numbers=none,
+  frame=none,
+  tabsize=2,
+  breaklines=true,
+  breakatwhitespace=true,
+  inputencoding=utf8,
+  extendedchars=true,
+  literate={á}{{\'a}}1 {ã}{{\~a}}1 {à}{{\`a}}1 {é}{{\'e}}1 {ê}{{\^e}}1 {è}{{\`e}}1 {î}{{\^i}}1 {ç}{{\c c}}1 {ù}{{\`u}}1 {ô}{{\^o}}1 {°}{{\#}}1,
+}
+
+\newcommand{\gl}{\guillemotleft}
+\newcommand{\gr}{\guillemotright}
+\newcommand{\eg}[1]{~\gl~#1~\gr~}
+\newcommand{\todo}{\texttt{TODO}}
+
+\title{Exploration du Langage et du Cerveau via l'IA}
+\subtitle{Rapport de Projet Tutoré}
+\author{Nicolas Roy \& Théo Massenya}
+\institute{Sous la direction de : Mme Revekka KYRIAKOGLOU\\Université Paris 8}
+\date{Juin 2026}
+\newcommand\code[1]{\textcolor{utred}{\texttt{#1}}}
+
+\begin{document}
+
+% Page de titre
+\titleframe
+
+% Table des matières / Plan
+\begin{frame}{Plan de la présentation}
+  \vspace{0.3cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{1. Contexte et Objectifs}
+        \scriptsize
+        \begin{itemize}
+          \item Le parallèle IA/Cerveau
+          \item Problématique et hypothèses
+        \end{itemize}
+      \end{block}
+      
+      \begin{block}{2. État de l'Art}
+        \scriptsize
+        \begin{itemize}
+          \item Modèle MUC (Hagoort)
+          \item Dimensionnalité Intrinsèque (TwoNN)
+          \item Le profil « Hunchback »
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \begin{block}{3. Notre Approche et Méthodologie}
+        \scriptsize
+        \begin{itemize}
+          \item Modèles et architecture
+          \item Protocole Sémantique vs Jabberwocky
+          \item Tokenisation (BPE) et alignement
+        \end{itemize}
+      \end{block}
+      
+      \begin{block}{4. Résultats et Analyse}
+        \scriptsize
+        \begin{itemize}
+          \item Profils Hunchback et Ramping
+          \item Discussion neurolinguistique
+        \end{itemize}
+      \end{block}
+      
+      \begin{block}{5. Conclusion}
+        \scriptsize
+        \begin{itemize}
+          \item Validation \& Perspectives
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+\section{Contexte et Objectifs}
+% ==============================================================================
+
+\begin{frame}{1. Contexte : Le parallèle IA et Cerveau}
+  \begin{columns}[c]
+    \begin{column}{0.75\textwidth}
+      \begin{block}{L'essor des Transformers}
+        \small
+        \begin{itemize}
+          \item Succès phénoménal des LLMs sur les tâches linguistiques complexes.
+          \item Fonctionnement interne souvent décrit comme une \textcolor{utred}{\textbf{boîte noire}}.
+        \end{itemize}
+      \end{block}
+      
+      \begin{block}{Le rapprochement Cognitif}
+        \small
+        \begin{itemize}
+          \item Les LLMs et le cerveau humain traitent le même signal : le langage naturel.
+          \item \textbf{Question clé} : L'IA extrait-elle et structure-t-elle les représentations du sens de manière géométriquement analogue au cerveau ?
+        \end{itemize}
+      \end{block}
+    \end{column}
+
+  \end{columns}
+\end{frame}
+
+\begin{frame}{1. Problématique et Hypothèses}
+  \begin{block}{Problématique}
+    \centering\large\color{utred}
+    Comment caractériser la dynamique d'unification sémantique au sein des couches d'un Transformer, et dans quelle mesure reflète-t-elle les signatures neuronales du cerveau humain ?
+  \end{block}
+  \vspace{0.2cm}
+  \begin{columns}[t]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Hypothèse 1 : Ramping}
+        \scriptsize
+        Accumulation continue de l'information sémantique le long de la phrase, traduisant une augmentation de la dimensionnalité géométrique locale.
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Hypothèse 2 : Cohérence}
+        \scriptsize
+        Une phrase cohérente engendre un surcoût d'unification progressive (ID plus élevée) par rapport à une suite vide de sens (Jabberwocky).
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Hypothèse 3 : Hunchback}
+        \scriptsize
+        Le profil « bossu » d'ID (expansion puis compression) sera perturbé par l'absence de cohérence sémantique (Jabberwocky).
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+\section{État de l'Art}
+% ==============================================================================
+
+\begin{frame}{2. Principes Neurolinguistiques : Le Modèle MUC}
+  \begin{columns}[c]
+    \begin{column}{0.52\textwidth}
+      \small
+      Le modèle \textbf{Memory, Unification, and Control (MUC)} de Peter Hagoort décrit le traitement du langage dans l'hémisphère gauche :
+      \vspace{0.2cm}
+      \begin{itemize}
+        \item \textbf{Memory (Cortex temporal)} : Stockage et récupération du lexique (structures syntaxiques et sémantiques).
+        \item \textbf{Unification (Gyrus frontal inférieur / Broca)} : Assemblage dynamique et intégration des briques en une structure sémantique globale cohérente.
+        \item \textbf{Control (Cortex préfrontal)} : Gestion de l'attention et des objectifs communicatifs.
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.44\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{The-MUC-model-of-language-The-figure-displays-a-lateral-view-of-the-left-hemisphere-The.png}
+      \tiny \\ \textit{Localisation anatomique des composantes du MUC.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{2. La Dimensionnalité Intrinsèque (ID) \& TwoNN}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \begin{block}{L'Hypothèse de la Variété (Manifold)}
+        \small
+        Bien que représentées dans des espaces de très haute dimension (ex: $D = 768$ pour GPT-2), les données réelles sont confinées sur des structures locales de dimension beaucoup plus faible : l'\textbf{ID}.
+      \end{block}
+      
+      \begin{block}{L'estimateur TwoNN (Facco et al., 2017)}
+        \small
+        \begin{itemize}
+          \item Calcule le ratio des distances aux deux plus proches voisins pour chaque point : $\mu_i = r_{i,2} / r_{i,1}$.
+          \item ID estimée à partir de la fonction de répartition empirique de $\mu$.
+          \item Indépendant des variations de densité locale.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.46\textwidth}
+      \begin{exampleblock}{Propriété géométrique clé}
+        \scriptsize
+        L'apprentissage prédictif (minimiser l'erreur du prochain token) force la compression géométrique des représentations sur des variétés compactes et de basse dimensionnalité intrinsèque.
+      \end{exampleblock}
+      \centering
+      \vspace{0.5cm}
+      \large $d = - \frac{\ln(1 - F(\mu))}{\ln(\mu)}$
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{2. Dynamique par couches : Le Profil « Hunchback »}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \small
+      Ansuini et al. (2019) mettent en évidence une évolution non-linéaire de l'ID à travers les couches des réseaux profonds :
+      \vspace{0.2cm}
+      \begin{itemize}
+        \item \textbf{1. Phase d'expansion} : Dans les premières couches, l'ID augmente pour « déplier » les données d'entrée et séparer les facteurs de variation.
+        \item \textbf{2. Phase de compression} : Dans les couches supérieures, l'ID diminue drastiquement pour ne retenir que l'information utile à la prédiction (goulot d'étranglement sémantique).
+      \end{itemize}
+    \end{column}
+    
+    \begin{column}{0.46\textwidth}
+      \centering
+      \includegraphics[width=0.9\linewidth]{profil Hunchback.png}
+      \tiny \\ \textit{Profil Hunchback typique dans VGG-16 (Ansuini et al.).}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{2. Signatures Temporelles de l'Unification}
+  \begin{block}{Le phénomène de « Ramping »}
+    \small
+    \begin{itemize}
+      \item Chez l'humain (EEG/fMRI), l'unification s'accompagne d'une augmentation graduelle et continue de l'activité neuronale dans l'aire de Broca au cours de la phrase.
+      \item Desbordes et al. (2023) montrent que les représentations internes des LLMs évoluent de manière similaire : l'ID augmente progressivement mot après mot.
+      \item \textbf{Stimuli sémantiques vs non-sensés} : Le Ramping est soutenu par la cohérence sémantique. L'absence de sens (ex: Jabberwocky) perturbe cette accumulation progressive.
+    \end{itemize}
+  \end{block}
+  \begin{center}
+    \textcolor{utred}{\textbf{Hypothèse}} : Le ramping géométrique est une signature de l'effort d'intégration sémantique.
+  \end{center}
+\end{frame}
+
+% ==============================================================================
+\section{Notre Approche - Méthodologie et Protocole}
+% ==============================================================================
+
+\begin{frame}{3. Outils et Modèle Expérimental}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Modèle de Langage : GPT-2 Small}
+        \small
+        \begin{itemize}
+          \item Modèle \textit{Decoder-only} causal (12 couches, $D = 768$).
+          \item \textbf{Justification} : Le masque causal traite le texte de gauche à droite, simulant la linéarité temporelle de la lecture humaine.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Framework Technique}
+        \small
+        \begin{itemize}
+          \item \textbf{PyTorch} et \textbf{Hugging Face} pour l'extraction fine des \textit{hidden states} par couche et par token.
+          \item \textbf{scikit-dimension} pour l'implémentation robuste de TwoNN.
+          \item \textbf{spaCy} pour l'analyse syntaxique (POS Tagging) et la génération.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{3. Protocole Expérimental : Sémantique vs Jabberwocky}
+  \begin{block}{Objectif}
+    Isoler l'impact du traitement sémantique en maintenant la structure grammaticale et le patron syntaxique strictement identiques.
+  \end{block}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Groupe Sémantique (N = 500)}
+        \scriptsize
+        \begin{itemize}
+          \item Phrases extraites de \textbf{WikiText-2} (Wikipedia).
+          \item Langue : \textbf{Anglais} (GPT-2 Small étant entraîné sur de l'anglais).
+          \item Longueur : 8 à 20 mots, syntaxe propre.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Groupe Jabberwocky (N = 500)}
+        \scriptsize
+        \begin{itemize}
+          \item Remplacement systématique des \textbf{mots porteurs} (noms, verbes, adjectifs, adverbes) par des pseudo-mots respectant la phonotactique anglaise.
+          \item Conservation stricte des \textbf{mots-outils} (prépositions, articles, pronoms) et de la syntaxe.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{0.2cm}
+  \centering
+  \fbox{\small \textbf{Exemple} : \textit{"The evolution of language is taught"} $\rightarrow$ \textit{"The zumplation of language is carting"}}
+\end{frame}
+
+\begin{frame}{3. Enjeux de la Tokenisation : La Fragmentation BPE}
+  \begin{columns}[c]
+    \begin{column}{0.52\textwidth}
+      \begin{block}{Le biais de la tokenisation}
+        \small
+        \begin{itemize}
+          \item L'algorithme BPE fragmente les mots inconnus (pseudo-mots) en sous-tokens (ex: \textit{zumplation} $\rightarrow$ \textit{zump} + \textit{lation}).
+          \item Le Jabberwocky comporte en moyenne \textcolor{utred}{\textbf{2,05 fois plus de tokens}} que le sémantique.
+        \end{itemize}
+      \end{block}
+      
+      \begin{block}{Solution : Alignement Temporel Relative}
+        \small
+        \begin{itemize}
+          \item Normalisation de la longueur par extraction d'un token représentatif par \textbf{décile de position} (10\% à 100\%).
+          \item Neutralise le biais du nombre de tokens sur le calcul du ramping.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.44\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig3_bpe_fragmentation.png}
+      \tiny \\ \textit{Histogramme du ratio de fragmentation BPE.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{3. Expérience Classe Grammaticale}
+
+\end{frame}
+
+\begin{frame}{4. Pipeline d'Implémentation du Projet}
+  \centering
+  \begin{tikzpicture}[node distance=1.5cm, every node/.style={fill=white, draw=utred, rounded corners, font=\scriptsize, align=center}, arrow/.style={thick, ->, >=stealth, color=utblack}]
+    % Nodes
+    \node (v2) [draw=utblack] {0. Validation TwoNN \\ (Données synthétiques)};
+    \node (s1) [below of=v2, yshift=0.3cm] {1. Génération Stimuli \\ (Normalisation \& spaCy)};
+    \node (s2) [below of=s1, yshift=0.3cm] {2. Extraction Hidden States \\ (GPT-2 Small + Alignement Déciles)};
+    \node (s3) [below of=s2, yshift=0.3cm] {3. Calcul de l'ID locale \\ (Algorithme TwoNN + Bootstrap)};
+    \node (s4) [below of=s3, yshift=0.3cm, fill=utred!10] {4. Visualisation \& Tests Statistiques \\ (Mann-Whitney / Regressions)};
+
+    % Arrows
+    \draw [arrow] (v2) -- (s1);
+    \draw [arrow] (s1) -- (s2);
+    \draw [arrow] (s2) -- (s3);
+    \draw [arrow] (s3) -- (s4);
+  \end{tikzpicture}
+\end{frame}
+
+% ==============================================================================
+\section{Résultats et Analyse}
+% ==============================================================================
+
+
+\begin{frame}{4. Évolution par Couche : La Rupture du Hunchback}
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Sémantique (Bleu) : Hunchback Typique}
+        \scriptsize
+        \begin{itemize}
+          \item \textbf{Expansion} : L'ID augmente de 18.65 à \textbf{21.14} (couche 6). Démêlage des variables sémantiques.
+          \item \textbf{Compression} : L'ID diminue jusqu'à \textbf{18.29} (couche 12). Extraction d'un concept abstrait.
+        \end{itemize}
+      \end{block}
+      
+      \begin{block}{Jabberwocky (Rouge) : Explosion Finale}
+        \scriptsize
+        \begin{itemize}
+          \item L'ID ne compresse jamais : elle croît continuellement pour culminer à \textbf{30.01} à la couche 12.
+          \item Échec de l'unification : faute de cohérence sémantique, la représentation reste bruitée.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig1_hunchback.png}
+      \tiny \\ \textit{ID par couche sur le dernier token de la phrase.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{4. Dynamique Temporelle : Le Ramping de l'ID}
+  \begin{columns}[c]
+    \begin{column}{0.46\textwidth}
+      \begin{block}{Sémantique : Ramping précoce}
+        \scriptsize
+        \begin{itemize}
+          \item Pente positive et statistiquement significative dès la **couche 3** et jusqu'à la couche 11.
+          \item \textbf{Processus d'intégration continue} : l'unification sémantique augmente progressivement la charge représentationnelle.
+        \end{itemize}
+      \end{block}
+      
+      \begin{block}{Jabberwocky : Profil en 2 étapes}
+        \scriptsize
+        \begin{itemize}
+          \item \textbf{Holding Pattern} (10\% à 80\%) : ID basse et stable. Le modèle ne stocke que la structure syntaxique (peu coûteuse).
+          \item \textbf{Wrap-up final} (90\%-100\%) : Bond d'ID brutal. Au point final, la fermeture de la proposition force l'unification, provoquant l'explosion dimensionnelle.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.52\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig2_ramping.png}
+      \tiny \\ \textit{Évolution temporelle de l'ID par déciles de position.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{4. Confrontation Cognitive : Le rôle du Contrôle}
+  \begin{block}{Le Parallèle MUC}
+    \small
+    Le Ramping sémantique progressif et l'augmentation géométrique dans les couches intermédiaires modélisent de manière convaincante le processus d'\textbf{Unification} de l'aire de Broca.
+  \end{block}
+  \vspace{0.1cm}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Le Cerveau Humain}
+        \scriptsize
+        \begin{itemize}
+          \item Face au Jabberwocky, le cerveau humain désengage rapidement son attention sémantique après constatation de l'incohérence.
+          \item Ce rôle est joué par le **Contrôle** cognitif (Cortex préfrontal dorsolatéral).
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Le Transformer (GPT-2)}
+        \scriptsize
+        \begin{itemize}
+          \item Dépourvu de régulation attentionnelle cognitive supérieure.
+          \item Forcé d'appliquer le même mécanisme uniforme, il s'épuise à chercher un sens aux pseudo-mots, d'où l'explosion de l'ID.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+\section{Conclusion}
+% ==============================================================================
+
+\begin{frame}{5. Conclusion : Validation des Hypothèses}
+  \begin{block}{Validation des hypothèses de travail}
+    \small
+    \begin{enumerate}
+      \item \textbf{Ramping validé} : La dimensionnalité géométrique augmente de manière lente et continue au cours de la lecture sémantique.
+      \item \textbf{Effet de cohérence validé} : L'unification sémantique présente une charge géométrique progressive, confirmée par la comparaison avec le Jabberwocky.
+      \item \textbf{Déformation Hunchback validée} : L'absence de sens bloque la compression géométrique dans les couches finales cachées de GPT-2 Small.
+    \end{enumerate}
+  \end{block}
+  \vspace{0.2cm}
+  \begin{center}
+    \small \textbf{Contribution} : L'ID se révèle être un excellent marqueur géométrique macroscopique pour sonder le traitement sémantique des modèles de langage.
+  \end{center}
+\end{frame}
+
+\begin{frame}{5. Limites et Perspectives}
+  \begin{columns}[t]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Limites de l'étude}
+        \small
+        \begin{itemize}
+          \item Modèle restreint en taille (GPT-2 Small, 117M params).
+          \item Restreint à la langue anglaise en raison de l'entraînement originel du modèle.
+        \end{itemize}
+      \end{block}
+    \end{column}
+    
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Perspectives de recherche}
+        \small
+        \begin{itemize}
+          \item \textbf{Changement d'échelle} : Reproduire le protocole sur des modèles plus volumineux (ex: Llama 3.1 8B).
+          \item \textbf{Estimateurs d'ID} : Tester d'autres algorithmes locaux (ex: Levina-Bickel, FisherS) pour consolider les mesures géométriques.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\lastframe%
+\end{document}
